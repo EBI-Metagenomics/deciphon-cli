@@ -13,26 +13,22 @@ url = "http://127.0.0.1:8000"
 headers = {"accept": "application/json"}
 
 
-class DBChoice(str, Enum):
-    list = "list"
+@cli.command()
+def db_list():
+    r = requests.get(f"{url}/dbs", headers=headers)
+    typer.echo(json.dumps(r.json(), indent=2))
 
 
 @cli.command()
-def db(command: DBChoice):
-    if command == command.list:
-        r = requests.get(f"{url}/dbs", headers=headers)
-        typer.echo(json.dumps(r.json(), indent=2))
-
-
-class JOBChoice(str, Enum):
-    next_pend = "next_pend"
+def job_pend():
+    r = requests.get(f"{url}/jobs/next_pend", headers=headers)
+    if r.status_code == 500:
+        typer.echo("No pending job has been found.")
+        return
+    typer.echo(json.dumps(r.json(), indent=2))
 
 
 @cli.command()
-def job(command: JOBChoice):
-    if command == command.next_pend:
-        r = requests.get(f"{url}/jobs/next_pend", headers=headers)
-        if r.status_code == 500:
-            typer.echo("No pending job has been found.")
-            return
-        typer.echo(json.dumps(r.json(), indent=2))
+def job_add(db_filename: str, fasta_filename: str):
+    r = requests.post(f"{url}/jobs/", headers=headers, json=json)
+    typer.echo(json.dumps(r.json(), indent=2))

@@ -16,6 +16,7 @@ pyright = "*"
 black = "*"
 isort = "*"
 pip = "*"
+deciphon-cli = {editable = true, path = "."}
 
 [requires]
 python_version = "3.9"
