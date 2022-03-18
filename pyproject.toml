@@ -1,15 +1,36 @@
-[build-system]
-requires = ["setuptools", "wheel", "cffi", "pep517", "build"]
-build-backend = "setuptools.build_meta"
+[tool.poetry]
+name = "deciphon-cli"
+version = "0.1.0"
+description = "Deciphon command-line interface"
 
-[project]
-name = "deciphon_api"
-authors = [{ name = "Danilo Horta", email = "danilo.horta@pm.me" }]
-license = { file = "LICENSE" }
+license = "MIT"
+
+authors = ["Danilo Horta <danilo.horta@pm.me>"]
+
+readme = "README.md"
+
+repository = "https://github.com/EBI-Metagenomics/deciphon-cli"
+homepage = "https://github.com/EBI-Metagenomics/deciphon-cli"
+
+keywords = ["deciphon", "cli"]
+
 classifiers = ["License :: OSI Approved :: MIT License"]
-dynamic = ["version", "description"]
-requires-python = ">=3.8"
-dependencies = ["typer"]
 
-[project.urls]
-Home = "http://github.com/EBI-Metagenomics/deciphon-cli"
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "*"
+toml = "^0.9"
+typer = "*"
+
+[tool.poetry.dev-dependencies]
+black = "*"
+isort = "*"
+pyright = "*"
+pytest = "*"
+
+[tool.poetry.scripts]
+dcp = 'deciphon_cli.console:run'
+
+[build-system]
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

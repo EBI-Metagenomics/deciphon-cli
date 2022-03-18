@@ -1,6 +1,4 @@
-from ._cli import cli
+__name__ = "deciphon-cli"
+__version__ = "0.1.0"
 
-__version__ = "0.0.1"
-__name__ = "deciphon_cli"
-
-__all__ = ["__version__", "__name__", "cli"]
+__all__ = ["__version__", "__name__"]
