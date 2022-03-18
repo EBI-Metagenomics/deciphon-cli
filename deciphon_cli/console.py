@@ -35,19 +35,26 @@ def db_list():
 @run.command()
 def job_pend():
     r = requests.get(f"{SCHED_API_URL}/jobs/next_pend", headers=Headers.recv)
-    # if r.status_code == 500:
-    #     typer.echo("No pending job has been found.")
-    #     return
     typer.echo(json.dumps(r.json(), indent=2))
 
 
 @run.command()
 def job_show(job_id: int = typer.Argument(...)):
     r = requests.get(f"{SCHED_API_URL}/jobs/{job_id}", headers=Headers.recv)
-    # if r.status_code == 500:
-    #     typer.echo("No job has been found.")
-    #     return
     typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def job_prods(job_id: int = typer.Argument(...)):
+    r = requests.get(f"{SCHED_API_URL}/jobs/{job_id}/prods", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def job_prods_gff(job_id: int = typer.Argument(...)):
+    headers = {"Accept": "text/plain"}
+    r = requests.get(f"{SCHED_API_URL}/jobs/{job_id}/prods/gff", headers=headers)
+    typer.echo(r.text)
 
 
 @run.command()
