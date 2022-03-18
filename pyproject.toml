@@ -17,6 +17,8 @@ keywords = ["deciphon", "cli"]
 classifiers = ["License :: OSI Approved :: MIT License"]
 
 [tool.poetry.dependencies]
+fasta-reader = "*"
+pydantic = "*"
 python = "^3.9"
 python-decouple = "*"
 requests = "*"

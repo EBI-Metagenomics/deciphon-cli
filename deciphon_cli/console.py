@@ -3,6 +3,9 @@ import json
 import requests
 import typer
 from decouple import config
+from fasta_reader import read_fasta
+
+from deciphon_cli.core import JobPost, SeqPost
 
 run = typer.Typer()
 
@@ -16,6 +19,14 @@ class Headers:
 
 
 @run.command()
+def db_show(
+    db_id: int = typer.Argument(...),
+):
+    r = requests.get(f"{SCHED_API_URL}/dbs/{db_id}", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
 def db_list():
     r = requests.get(f"{SCHED_API_URL}/dbs", headers=Headers.recv)
     typer.echo(json.dumps(r.json(), indent=2))
@@ -24,13 +35,33 @@ def db_list():
 @run.command()
 def job_pend():
     r = requests.get(f"{SCHED_API_URL}/jobs/next_pend", headers=Headers.recv)
-    if r.status_code == 500:
-        typer.echo("No pending job has been found.")
-        return
+    # if r.status_code == 500:
+    #     typer.echo("No pending job has been found.")
+    #     return
     typer.echo(json.dumps(r.json(), indent=2))
 
 
 @run.command()
-def job_add(db_filename: str, fasta_filename: str):
-    r = requests.post(f"{SCHED_API_URL}/jobs/", headers=Headers.both, json=json)
+def job_show(job_id: int = typer.Argument(...)):
+    r = requests.get(f"{SCHED_API_URL}/jobs/{job_id}", headers=Headers.recv)
+    # if r.status_code == 500:
+    #     typer.echo("No job has been found.")
+    #     return
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def job_add(
+    db_id: int = typer.Argument(...),
+    fasta_filepath: str = typer.Argument(...),
+    multi_hits: bool = typer.Argument(True),
+    hmmer3_compat: bool = typer.Argument(False),
+):
+    job = JobPost(db_id=db_id, multi_hits=multi_hits, hmmer3_compat=hmmer3_compat)
+    with read_fasta(fasta_filepath) as f:
+        for item in f:
+            seq = SeqPost(name=item.id, data=item.sequence)
+            job.seqs.append(seq)
+
+    r = requests.post(f"{SCHED_API_URL}/jobs/", headers=Headers.both, json=job.dict())
     typer.echo(json.dumps(r.json(), indent=2))
