@@ -19,6 +19,18 @@ class Headers:
 
 
 @run.command()
+def hmm_list():
+    r = requests.get(f"{SCHED_API_URL}/hmms", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def hmm_rm(hmm_id: int):
+    r = requests.delete(f"{SCHED_API_URL}/hmms/{hmm_id}", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
 def db_show(
     db_id: int = typer.Argument(...),
 ):
@@ -33,8 +45,20 @@ def db_list():
 
 
 @run.command()
+def db_rm(db_id: int):
+    r = requests.delete(f"{SCHED_API_URL}/dbs/{db_id}", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
 def job_pend():
     r = requests.get(f"{SCHED_API_URL}/jobs/next_pend", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def job_list():
+    r = requests.get(f"{SCHED_API_URL}/jobs", headers=Headers.recv)
     typer.echo(json.dumps(r.json(), indent=2))
 
 
@@ -72,3 +96,33 @@ def job_add(
 
     r = requests.post(f"{SCHED_API_URL}/jobs/", headers=Headers.both, json=job.dict())
     typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def job_rm(job_id: int):
+    r = requests.delete(f"{SCHED_API_URL}/jobs/{job_id}", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def scan_list():
+    r = requests.get(f"{SCHED_API_URL}/scans", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def prod_list():
+    r = requests.get(f"{SCHED_API_URL}/prods", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def seq_list():
+    r = requests.get(f"{SCHED_API_URL}/seqs", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def check_health():
+    r = requests.get(f"{SCHED_API_URL}/sched/check_health", headers=Headers.recv)
+    typer.echo(r.text)
