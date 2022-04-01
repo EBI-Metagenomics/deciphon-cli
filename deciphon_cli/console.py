@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import requests
 import typer
@@ -31,7 +32,29 @@ def hmm_rm(hmm_id: int):
 
 
 @run.command()
-def db_show(
+def hmm_add(hmm_file: Path):
+    r = requests.post(
+        f"{SCHED_API_URL}/hmms/",
+        headers=Headers.recv,
+        files={
+            "hmm_file": (
+                hmm_file.name,
+                open(hmm_file, "rb"),
+                "application/octet-stream",
+            )
+        },
+    )
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def hmm_get(hmm_id: int = typer.Argument(...)):
+    r = requests.get(f"{SCHED_API_URL}/hmms/{hmm_id}", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def db_get(
     db_id: int = typer.Argument(...),
 ):
     r = requests.get(f"{SCHED_API_URL}/dbs/{db_id}", headers=Headers.recv)
@@ -63,7 +86,7 @@ def job_list():
 
 
 @run.command()
-def job_show(job_id: int = typer.Argument(...)):
+def job_get(job_id: int = typer.Argument(...)):
     r = requests.get(f"{SCHED_API_URL}/jobs/{job_id}", headers=Headers.recv)
     typer.echo(json.dumps(r.json(), indent=2))
 
