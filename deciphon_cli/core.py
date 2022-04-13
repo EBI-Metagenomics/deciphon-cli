@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-__all__ = ["SeqPost", "JobPost"]
+__all__ = ["SeqPost", "ScanPost"]
 
 
 class SeqPost(BaseModel):
@@ -10,7 +10,7 @@ class SeqPost(BaseModel):
     data: str = ""
 
 
-class JobPost(BaseModel):
+class ScanPost(BaseModel):
     db_id: int = 0
     multi_hits: bool = False
     hmmer3_compat: bool = False

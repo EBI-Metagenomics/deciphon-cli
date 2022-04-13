@@ -6,7 +6,7 @@ import typer
 from decouple import config
 from fasta_reader import read_fasta
 
-from deciphon_cli.core import JobPost, SeqPost
+from deciphon_cli.core import ScanPost, SeqPost
 
 run = typer.Typer()
 
@@ -92,32 +92,8 @@ def job_get(job_id: int = typer.Argument(...)):
 
 
 @run.command()
-def job_prods(job_id: int = typer.Argument(...)):
+def job_prod(job_id: int = typer.Argument(...)):
     r = requests.get(f"{SCHED_API_URL}/jobs/{job_id}/prods", headers=Headers.recv)
-    typer.echo(json.dumps(r.json(), indent=2))
-
-
-@run.command()
-def job_prods_gff(job_id: int = typer.Argument(...)):
-    headers = {"Accept": "text/plain"}
-    r = requests.get(f"{SCHED_API_URL}/jobs/{job_id}/prods/gff", headers=headers)
-    typer.echo(r.text)
-
-
-@run.command()
-def job_add(
-    db_id: int = typer.Argument(...),
-    fasta_filepath: str = typer.Argument(...),
-    multi_hits: bool = typer.Argument(True),
-    hmmer3_compat: bool = typer.Argument(False),
-):
-    job = JobPost(db_id=db_id, multi_hits=multi_hits, hmmer3_compat=hmmer3_compat)
-    with read_fasta(fasta_filepath) as f:
-        for item in f:
-            seq = SeqPost(name=item.id, data=item.sequence)
-            job.seqs.append(seq)
-
-    r = requests.post(f"{SCHED_API_URL}/jobs/", headers=Headers.both, json=job.dict())
     typer.echo(json.dumps(r.json(), indent=2))
 
 
@@ -128,9 +104,79 @@ def job_rm(job_id: int):
 
 
 @run.command()
+def scan_add(
+    db_id: int = typer.Argument(...),
+    fasta_filepath: str = typer.Argument(...),
+    multi_hits: bool = typer.Argument(True),
+    hmmer3_compat: bool = typer.Argument(False),
+):
+    scan = ScanPost(db_id=db_id, multi_hits=multi_hits, hmmer3_compat=hmmer3_compat)
+    with read_fasta(fasta_filepath) as f:
+        for item in f:
+            seq = SeqPost(name=item.id, data=item.sequence)
+            scan.seqs.append(seq)
+
+    r = requests.post(f"{SCHED_API_URL}/scans/", headers=Headers.both, json=scan.dict())
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def scan_get(scan_id: int = typer.Argument(...)):
+    r = requests.get(f"{SCHED_API_URL}/scans/{scan_id}", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def scan_seq_list(scan_id: int = typer.Argument(...)):
+    r = requests.get(f"{SCHED_API_URL}/scans/{scan_id}/seqs", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
 def scan_list():
     r = requests.get(f"{SCHED_API_URL}/scans", headers=Headers.recv)
     typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def scan_prod_list(scan_id: int = typer.Argument(...)):
+    r = requests.get(f"{SCHED_API_URL}/scans/{scan_id}/prods", headers=Headers.recv)
+    typer.echo(json.dumps(r.json(), indent=2))
+
+
+@run.command()
+def scan_prod_gff(scan_id: int = typer.Argument(...)):
+    headers = {"Accept": "text/plain"}
+    r = requests.get(f"{SCHED_API_URL}/scans/{scan_id}/prods/gff", headers=headers)
+    typer.echo(r.text, nl=False)
+
+
+@run.command()
+def scan_prod_path(scan_id: int = typer.Argument(...)):
+    headers = {"Accept": "text/plain"}
+    r = requests.get(f"{SCHED_API_URL}/scans/{scan_id}/prods/path", headers=headers)
+    typer.echo(r.text, nl=False)
+
+
+@run.command()
+def scan_prod_fragment(scan_id: int = typer.Argument(...)):
+    headers = {"Accept": "text/plain"}
+    r = requests.get(f"{SCHED_API_URL}/scans/{scan_id}/prods/fragment", headers=headers)
+    typer.echo(r.text, nl=False)
+
+
+@run.command()
+def scan_prod_amino(scan_id: int = typer.Argument(...)):
+    headers = {"Accept": "text/plain"}
+    r = requests.get(f"{SCHED_API_URL}/scans/{scan_id}/prods/amino", headers=headers)
+    typer.echo(r.text, nl=False)
+
+
+@run.command()
+def scan_prod_codon(scan_id: int = typer.Argument(...)):
+    headers = {"Accept": "text/plain"}
+    r = requests.get(f"{SCHED_API_URL}/scans/{scan_id}/prods/codon", headers=headers)
+    typer.echo(r.text, nl=False)
 
 
 @run.command()
@@ -146,6 +192,12 @@ def seq_list():
 
 
 @run.command()
-def check_health():
+def sched_wipe():
+    r = requests.delete(f"{SCHED_API_URL}/sched/wipe", headers=Headers.recv)
+    typer.echo(r.text)
+
+
+@run.command()
+def sched_check_health():
     r = requests.get(f"{SCHED_API_URL}/sched/check_health", headers=Headers.recv)
     typer.echo(r.text)
