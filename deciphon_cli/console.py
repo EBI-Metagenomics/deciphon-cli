@@ -19,7 +19,7 @@ API_URL = f"http://{API_HOST}:{API_PORT}{API_PREFIX}"
 
 
 class Headers:
-    recv = {"Accept": "application/json"}
+    recv = {"Accept": "application/json", "X-API-KEY": API_KEY}
     send = {"Content-Type": "application/json", "X-API-KEY": API_KEY}
     both = {
         "Accept": "application/json",
