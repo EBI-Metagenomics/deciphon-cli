@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     api_port: int = 49329
     api_prefix: str = ""
     api_key: str = "change-me"
+    verbose: bool = False
 
     class Config:
         env_file = ".env"

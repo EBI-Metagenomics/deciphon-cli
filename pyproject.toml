@@ -24,6 +24,7 @@ requests = "*"
 requests-toolbelt = "*"
 toml = "^0.9"
 typer = "*"
+tqdm = "*"
 
 [tool.poetry.dev-dependencies]
 black = "*"
@@ -32,7 +33,7 @@ pyright = "*"
 pytest = "*"
 
 [tool.poetry.scripts]
-dcp = 'deciphon_cli.console:run'
+dcp = 'deciphon_cli.main:app'
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]
