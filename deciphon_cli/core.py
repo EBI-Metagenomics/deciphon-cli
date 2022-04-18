@@ -1,8 +1,11 @@
+import ctypes
+from pathlib import Path
 from typing import List
 
+import xxhash
 from pydantic import BaseModel
 
-__all__ = ["SeqPost", "ScanPost"]
+__all__ = ["SeqPost", "ScanPost", "xxh3"]
 
 
 class SeqPost(BaseModel):
@@ -65,3 +68,11 @@ class ScanPost(BaseModel):
                 ),
             ],
         )
+
+
+def xxh3(filepath: Path) -> int:
+    x = xxhash.xxh3_64()
+    with open(filepath, "rb") as f:
+        for chunk in f:
+            x.update(chunk)
+    return ctypes.c_int64(x.intdigest()).value

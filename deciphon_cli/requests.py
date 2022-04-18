@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import requests
-import typer
 from requests.exceptions import ConnectionError
 from requests_toolbelt.multipart import encoder
 from requests_toolbelt.multipart.encoder import MultipartEncoderMonitor
@@ -10,7 +9,7 @@ from tqdm import tqdm
 from deciphon_cli.errors import handle_connection_error
 from deciphon_cli.settings import settings
 
-__all__ = ["get_json", "get_plain", "post", "delete", "upload", "download"]
+__all__ = ["get", "get_json", "get_plain", "post", "delete", "upload", "download"]
 
 
 def url(path: str) -> str:
