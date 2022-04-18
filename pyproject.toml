@@ -18,6 +18,7 @@ classifiers = ["License :: OSI Approved :: MIT License"]
 
 [tool.poetry.dependencies]
 fasta-reader = "*"
+pooch = "*"
 pydantic = { extras = ["dotenv"], version = "*" }
 python = "^3.8"
 requests = "*"

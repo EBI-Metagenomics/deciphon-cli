@@ -34,23 +34,19 @@ def add(hmm_file: Path):
         typer.echo(upload("/hmms/", "hmm_file", hmm_file, mime))
 
 
-class GetBy(str, Enum):
-    ID = "id"
-    JOB_ID = "job_id"
+class HMMIDType(str, Enum):
+    HMM_ID = "hmm_id"
     XXH3 = "xxh3"
     FILENAME = "filename"
+    JOB_ID = "job_id"
 
 
 @app.command()
-def get(hmm_id: str = typer.Argument(...), by: GetBy = typer.Option(GetBy.ID)):
-    if by == GetBy.ID:
-        typer.echo(get_json(f"/hmms/{hmm_id}"))
-    elif by == GetBy.JOB_ID:
-        typer.echo(get_json(f"/hmms/by-job-id/{hmm_id}"))
-    elif by == GetBy.XXH3:
-        typer.echo(get_json(f"/hmms/by-xxh3/{hmm_id}"))
-    elif by == GetBy.FILENAME:
-        typer.echo(get_json(f"/hmms/by-filename/{hmm_id}"))
+def get(
+    id: str = typer.Argument(...),
+    id_type: HMMIDType = typer.Option(HMMIDType.HMM_ID.value),
+):
+    typer.echo(get_json(f"/hmms/{id}", {"id_type": id_type.value}))
 
 
 @app.command()

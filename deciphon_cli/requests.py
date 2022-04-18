@@ -16,14 +16,14 @@ def url(path: str) -> str:
     return f"{settings.api_url}{path}"
 
 
-def get(path: str, content_type: str) -> requests.Response:
+def get(path: str, content_type: str, params=None) -> requests.Response:
     hdrs = {
         "Accept": "application/json",
         "Content-Type": content_type,
         "X-API-KEY": settings.api_key,
     }
     try:
-        return requests.get(url(path), headers=hdrs)
+        return requests.get(url(path), params=params, headers=hdrs)
     except ConnectionError as conn_error:
         handle_connection_error(conn_error)
 
@@ -34,8 +34,8 @@ def pretty_json(v) -> str:
     return json.dumps(v, indent=2)
 
 
-def get_json(path: str) -> str:
-    return pretty_json(get(path, "application/json").json())
+def get_json(path: str, params=None) -> str:
+    return pretty_json(get(path, "application/json", params).json())
 
 
 def get_plain(path: str) -> str:
