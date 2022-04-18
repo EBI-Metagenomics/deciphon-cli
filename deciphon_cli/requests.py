@@ -115,6 +115,7 @@ def upload(path: str, field_name: str, filepath: Path, mime: str) -> str:
             data=monitor,  # type: ignore
             headers=hdrs,
         )
+        # r.raise_for_status()
     return pretty_json(r.json())
 
 

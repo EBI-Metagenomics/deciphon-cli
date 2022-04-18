@@ -9,7 +9,7 @@ app = typer.Typer()
 
 @app.command()
 def wipe():
-    typer.echo(delete(f"/sched/wipe").text)
+    typer.echo(delete(f"/sched/wipe"))
 
 
 @app.command()

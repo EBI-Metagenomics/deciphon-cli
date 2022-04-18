@@ -20,14 +20,24 @@ reason = "requires connection to deciphon-api"
 
 @pytest.mark.usefixtures("clean")
 @pytest.mark.skipif(not online, reason=reason)
-def test_hmm_add(minifam_hmm, pfam1_hmm):
+def test_db_add(minifam_hmm, minifam_db):
     result = runner.invoke(app, ["sched", "wipe"])
     assert result.exit_code == 0
 
     result = runner.invoke(app, ["hmm", "add", minifam_hmm.name])
     assert result.exit_code == 0
 
-    result = runner.invoke(app, ["hmm", "add", pfam1_hmm.name])
+    result = runner.invoke(app, ["db", "add", minifam_db.name])
+    assert result.exit_code == 0
+
+
+@pytest.mark.usefixtures("clean")
+@pytest.mark.skipif(not online, reason=reason)
+def test_db_add_fail(minifam_db):
+    result = runner.invoke(app, ["sched", "wipe"])
+    assert result.exit_code == 0
+
+    result = runner.invoke(app, ["db", "add", minifam_db.name])
     assert result.exit_code == 0
 
 

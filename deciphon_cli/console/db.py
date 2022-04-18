@@ -1,8 +1,12 @@
 from enum import Enum
+from pathlib import Path
 
 import typer
 
-from deciphon_cli.requests import delete, get_json
+from deciphon_cli.core import xxh3
+from deciphon_cli.requests import delete
+from deciphon_cli.requests import get as get_request
+from deciphon_cli.requests import get_json, upload
 
 __all__ = ["app"]
 
@@ -14,6 +18,18 @@ class DBIDType(str, Enum):
     XXH3 = "xxh3"
     FILENAME = "filename"
     HMM_ID = "hmm_id"
+
+
+@app.command()
+def add(db_file: Path):
+    mime = "application/octet-stream"
+    params = {"id_type": DBIDType.XXH3.value}
+    r = get_request(f"/dbs/{xxh3(db_file)}", "application/json", params)
+    if r.status_code == 200:
+        typer.echo("DB already exists.")
+        typer.Exit(1)
+    else:
+        typer.echo(upload("/dbs/", "db_file", db_file, mime))
 
 
 @app.command()
