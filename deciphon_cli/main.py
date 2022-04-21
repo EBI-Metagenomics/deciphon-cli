@@ -1,6 +1,6 @@
 import typer
 
-from deciphon_cli.console import db, hmm, job, prod, scan, sched, seq
+from deciphon_cli.console import db, env, hmm, job, prod, scan, sched, seq
 from deciphon_cli.settings import settings
 
 __all__ = ["app"]
@@ -13,6 +13,7 @@ app.add_typer(prod.app, name="prod")
 app.add_typer(scan.app, name="scan")
 app.add_typer(sched.app, name="sched")
 app.add_typer(seq.app, name="seq")
+app.add_typer(env.app, name="env")
 
 
 @app.callback()

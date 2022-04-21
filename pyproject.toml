@@ -17,7 +17,6 @@ keywords = ["deciphon", "cli"]
 classifiers = ["License :: OSI Approved :: MIT License"]
 
 [tool.poetry.dependencies]
-deciphon-api = "*"
 fasta-reader = "*"
 pooch = "*"
 pydantic = { extras = ["dotenv"], version = "*" }

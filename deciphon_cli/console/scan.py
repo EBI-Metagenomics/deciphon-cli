@@ -1,12 +1,19 @@
+from enum import Enum
+
 import typer
 from fasta_reader import read_fasta
 
 from deciphon_cli.core import ScanPost, SeqPost
-from deciphon_cli.requests import get_json, get_plain, post
+from deciphon_cli.requests import get_json, get_plain, post_json
 
 __all__ = ["app"]
 
 app = typer.Typer()
+
+
+class ScanIDType(str, Enum):
+    SCAN_ID = "scan_id"
+    JOB_ID = "job_id"
 
 
 @app.command()
@@ -22,12 +29,15 @@ def add(
             seq = SeqPost(name=item.id, data=item.sequence)
             scan.seqs.append(seq)
 
-    typer.echo((post(f"/scans/", scan.dict()).json()))
+    typer.echo(post_json(f"/scans/", scan.dict()))
 
 
 @app.command()
-def get(scan_id: int = typer.Argument(...)):
-    typer.echo((get_json(f"/scans/{scan_id}")))
+def get(
+    scan_id: int = typer.Argument(...),
+    id_type: ScanIDType = typer.Option(ScanIDType.SCAN_ID.value),
+):
+    typer.echo((get_json(f"/scans/{scan_id}", {"id_type": id_type.value})))
 
 
 @app.command()

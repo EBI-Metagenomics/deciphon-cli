@@ -9,7 +9,18 @@ from tqdm import tqdm
 from deciphon_cli.errors import handle_connection_error
 from deciphon_cli.settings import settings
 
-__all__ = ["get", "get_json", "get_plain", "post", "delete", "upload", "download"]
+__all__ = [
+    "get",
+    "get_json",
+    "get_plain",
+    "post",
+    "post_json",
+    "delete",
+    "upload",
+    "download",
+    "patch",
+    "patch_json",
+]
 
 
 def url(path: str) -> str:
@@ -63,6 +74,26 @@ def post(path: str, json) -> requests.Response:
         return requests.post(url(path), headers=hdrs, json=json)
     except ConnectionError as conn_error:
         handle_connection_error(conn_error)
+
+
+def post_json(path: str, json) -> str:
+    return pretty_json(post(path, json).json())
+
+
+def patch(path: str, json) -> requests.Response:
+    hdrs = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-API-KEY": settings.api_key,
+    }
+    try:
+        return requests.patch(url(path), headers=hdrs, json=json)
+    except ConnectionError as conn_error:
+        handle_connection_error(conn_error)
+
+
+def patch_json(path: str, json):
+    return pretty_json(patch(path, json).json())
 
 
 def tqdm_file(total_bytes: int, filename: str):
