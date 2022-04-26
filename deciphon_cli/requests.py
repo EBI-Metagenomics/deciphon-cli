@@ -150,6 +150,9 @@ def upload(path: str, field_name: str, filepath: Path, mime: str) -> str:
     return pretty_json(r.json())
 
 
+chunk_size = 64 * 1024
+
+
 def download(path: str, filename: str):
     hdrs = {
         "Accept": "*/*",
@@ -160,7 +163,7 @@ def download(path: str, filename: str):
         with open(filename, "wb") as f:
             total = int(r.headers["Content-Length"])
             with tqdm_file(total, filename) as bar:
-                for chunk in r.iter_content(chunk_size=8192):
+                for chunk in r.iter_content(chunk_size=chunk_size):
                     # filter out keep-alive new chunks
                     if chunk:
                         f.write(chunk)
