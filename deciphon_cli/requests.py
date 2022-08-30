@@ -20,6 +20,7 @@ __all__ = [
     "download",
     "patch",
     "patch_json",
+    "upload_scan",
 ]
 
 
@@ -122,6 +123,43 @@ class UploadProgress:
         increment = monitor.bytes_read - self._bytes_read
         self._bar.update(increment)
         self._bytes_read += increment
+
+
+def upload_scan(
+    db_id: int,
+    multi_hits: bool,
+    hmmer3_compat: bool,
+    path: str,
+    field_name: str,
+    filepath: Path,
+    mime: str,
+) -> str:
+    e = encoder.MultipartEncoder(
+        fields={
+            "db_id": str(db_id),
+            "multi_hits": str(multi_hits),
+            "hmmer3_compat": str(hmmer3_compat),
+            field_name: (
+                filepath.name,
+                open(filepath, "rb"),
+                mime,
+            ),
+        }
+    )
+    with UploadProgress(e.len, filepath.name) as up:
+        monitor = encoder.MultipartEncoderMonitor(e, up)
+        hdrs = {
+            "Accept": "application/json",
+            "Content-Type": monitor.content_type,
+            "X-API-KEY": settings.api_key,
+        }
+        r = requests.post(
+            url(path),
+            data=monitor,  # type: ignore
+            headers=hdrs,
+        )
+        # r.raise_for_status()
+    return pretty_json(r.json())
 
 
 def upload(path: str, field_name: str, filepath: Path, mime: str) -> str:
